@@ -1,5 +1,0 @@
-services:
-  - name: your-backend-service
-    type: web
-    buildCommand: yarn build
-    branch: 03-mongodb
