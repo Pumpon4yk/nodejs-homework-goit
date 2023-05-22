@@ -1,9 +1,6 @@
 const { Schema, model } = require("mongoose");
-const Joi = require("joi");
 const { handleMongooseError } = require("../helpers");
-
-const regexpPhone = /^(?:\(\d{3}\)|\d{3})[- ]?\d{3}[- ]?\d{4}$/;
-const regexpEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const {regexpEmail,regexpPhone} = require("../schemas/regexps")
 
 const contactSchema = new Schema(
   {
@@ -25,45 +22,16 @@ const contactSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+    }
   },
   { versionKey: false, timestamps: true }
 );
 
 contactSchema.post("save", handleMongooseError);
 
-const contactsAddSchema = Joi.object({
-  name: Joi.string().required().messages({
-    "string.name": "please enter a valid name",
-    "any.required": "missing required name field",
-  }),
-  email: Joi.string().email().pattern(regexpEmail).required().messages({
-    "string.email": "please enter a valid email",
-    "any.required": "missing required email field",
-  }),
-  phone: Joi.string().pattern(regexpPhone).required().messages({
-    "string.pattern.base": "please enter a valid phone",
-    "any.required": "missing required phone field",
-  }),
-  favorite: Joi.boolean(),
-});
-
-const updateFavoriteSchema = Joi.object({
-  favorite: Joi.boolean()
-    .messages({
-      "string.pattern.base": "please enter a valid favorite",
-      "any.required": "missing field favorite",
-    })
-    .required(),
-});
-
-const schemas = {
-  contactsAddSchema,
-  updateFavoriteSchema,
-};
-
 const Contact = model("contact", contactSchema);
 
-module.exports = {
-  schemas,
-  Contact,
-};
+module.exports = Contact
