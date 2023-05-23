@@ -1,7 +1,9 @@
-const validateBodyContacts = require('./validateBodyContacts')
-const isValidId = require('./isValidId')
+const validateBody = require('./validateBody');
+const isValidId = require('./isValidId');
+const authValidToken = require('./authValidToken');
 
 module.exports = {
-  validateBodyContacts,
-  isValidId
+  validateBody,
+  isValidId,
+  authValidToken
 }
