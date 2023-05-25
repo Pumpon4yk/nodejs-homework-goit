@@ -1,12 +1,17 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
+const fs = require("fs/promises");
+const path = require("path");
+const Jimp = require("jimp");
 
 const User = require("../models/user");
 
 const {HttpError, controlWrapper} = require("../helpers");
 
 const {SECRET_KEY} = process.env;
+
+const avtDir = path.join(__dirname, "../", "public", "avatars");
 
 
 const register = async (req, res) => {
@@ -80,6 +85,27 @@ const subscription = async (req, res) => {
   const user = await User.findByIdAndUpdate(_id, req.body, {new: true});
 
   res.json(user);
+};
+
+const changeAvatar = async (req, res) => {
+  const {_id} = req.user;
+  const {path: tmpUpload, originalname} = req.file;
+  const fileName = `${_id}_${originalname}`;
+  const resultUpload = path.join(avtDir, fileName);
+  
+  const img = await Jimp.read(tmpUpload);
+  
+  img.resize(250, 250);
+  await img.writeAsync(tmpUpload);
+  
+  await fs.rename(tmpUpload, resultUpload);
+
+  const avatarURL = path.join("avatars", fileName);
+
+  await User.findByIdAndUpdate(_id, avatarURL);
+
+  res.json({avatarURL});
+
 }
 
 module.exports = {
@@ -87,5 +113,6 @@ module.exports = {
   login: controlWrapper(login),
   logout: controlWrapper(logout),
   current: controlWrapper(current),
-  subscription: controlWrapper(subscription)
+  subscription: controlWrapper(subscription),
+  changeAvatar: controlWrapper(changeAvatar)
 }
