@@ -90,11 +90,11 @@ const subscription = async (req, res) => {
 const changeAvatar = async (req, res) => {
   const {_id} = req.user;
   const {path: tmpUpload, originalname} = req.file;
-  const fileName = `${_id}_${originalname}`;
+  const fileName = `${_id}_250w_${originalname}`;
   const resultUpload = path.join(avtDir, fileName);
   
   const img = await Jimp.read(tmpUpload);
-  
+
   img.resize(250, 250);
   await img.writeAsync(tmpUpload);
   
