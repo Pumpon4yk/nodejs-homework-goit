@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const request = require("supertest");
 const app = require("../app");
 const User = require("../models/user");
-const { DB_HOST } = process.env;
+const { TEST_DB_HOST } = process.env;
 
 const user = {
   email: "testJest@mail.com",
@@ -13,7 +13,7 @@ const responseLogin = async () => await request(app).post("/api/auth/users/login
 
 describe("User login", () => {
   beforeAll(async () => {
-    await mongoose.connect(DB_HOST, {
+    await mongoose.connect(TEST_DB_HOST, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
